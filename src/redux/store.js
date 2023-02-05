@@ -1,9 +1,8 @@
 
-import { contactsInitState } from './contacts/contacts.init-state';
-// import { contactsReducer } from './contacts/contacts.reducer';
 import { configureStore } from '@reduxjs/toolkit';
 import { contactsReducer } from './contacts/contacts.slice';
-import { persistStore, persistReducer } from 'redux-persist';
+import { contactsFilter } from './contacts/filter.slice';
+import {  persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import {
@@ -18,33 +17,25 @@ import {
 
 
 
-const initState = {
-    contacts: contactsInitState,    
-     
-}
+
 
 
 const persistConfig = {
-  key: 'phonebook',
+    key: 'phonebook',
     storage,
-  blacklist: ['filter'],
-}
-
-
-const rootReducer = combineReducers({
-    contacts: contactsReducer,
-
-});
-
-const persistedReducer = persistReducer(persistConfig, rootReducer)
-export const store = configureStore({
    
-    preloadedState: initState,
+};
+
+
+
+
+const persistedReducer = persistReducer(persistConfig, contactsReducer)
+export const store = configureStore({
     devTools: true,
     reducer: {
-      contacts:  persistReducer(persistConfig, contactsReducer) ,
-    },
-
+        contacts: persistedReducer,
+        filter: contactsFilter,
+    } ,
 
      middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
@@ -55,4 +46,5 @@ export const store = configureStore({
     });
    
 
-export const persistor = persistStore(store)
+export const persistor = persistStore(store);
+
